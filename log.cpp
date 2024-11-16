@@ -3,7 +3,7 @@
 #include <ctime> // For DateTime representation
 
 // Define the Activity structure
-struct Activity {
+struct Activities {
     int code;
     std::time_t date;    // Using time_t to represent DateTime
     std::time_t minutes; // Assuming this is a duration represented in time_t
