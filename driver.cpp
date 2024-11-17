@@ -1,6 +1,5 @@
-#include "log.cpp"
-#include "description.cpp"
+#include <log.cpp>
 
 int main(){
-	printProgramDescription();
+
 }

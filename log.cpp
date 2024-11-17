@@ -17,7 +17,7 @@ public:
     std::string firstName;
     std::string lastName;
     std::string name;
-    std::vector<Activities> activities; // Using std::vector for the list of activities
+    std::vector<Activity> activities; // Using std::vector for the list of activities
 
     // Constructor (optional)
     Log(const std::string& classId, const std::string& firstName, const std::string& lastName, const std::string& name)
