@@ -1,30 +1,24 @@
-#include <string>
-#include <vector>
-#include <ctime> // For DateTime representation
+#include "log.h"
+using namespace std;
 
-// Define the Activity structure
-struct Activities {
-    int code;
-    std::time_t date;    // Using time_t to represent DateTime
-    std::time_t minutes; // Assuming this is a duration represented in time_t
-};
+Log::Log(const string& name) : name(name) {}
 
-// Define the Log class
-class Log {
-public:
-    // Member variables
-    std::string classId;
-    std::string firstName;
-    std::string lastName;
-    std::string name;
-    std::vector<Activities> activities; // Using std::vector for the list of activities
+void Log::addActivity(Activity activity) {
+  activities.push_back(activity);
+}
 
-    // Constructor (optional)
-    Log(const std::string& classId, const std::string& firstName, const std::string& lastName, const std::string& name)
-        : classId(classId), firstName(firstName), lastName(lastName), name(name) {}
+void Log::setClassId(const string& classId) {
+  this->classId = classId;
+}
 
-    // Add activity method (optional)
-    void addActivity(int code, std::time_t date, std::time_t minutes) {
-        activities.push_back({code, date, minutes});
-    }
-};
+void Log::setFirstName(const string& firstName) {
+  this->firstName = firstName;
+}
+
+void Log::setLastName(const string& lastName) {
+  this->lastName = lastName;
+}
+
+void Logs::addLog(Log log) {
+	logs.push_back(log);
+}
