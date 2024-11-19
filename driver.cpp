@@ -23,6 +23,9 @@ void printLogFileData() {
 int main() {
 	printProgramDescription();
 
+	cout << "Please press ENTER to continue..." << endl;
+	cin.get();
+
 	try {
 		Validator::validateFiles();
 		printLogFileData();
