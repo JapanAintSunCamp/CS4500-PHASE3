@@ -2,6 +2,8 @@
 #include "log.cpp"
 #include "description.cpp"
 #include "validation.cpp"
+#include "report_2.cpp"
+#include "report.cpp"
 
 using namespace std;
 
@@ -28,7 +30,7 @@ int main() {
 
 	try {
 		Validator::validateFiles();
-		printLogFileData();
+		Report2::generateReport();
 	} catch(const string &errorMessage) {
 		cout << errorMessage << endl;
 	}
