@@ -305,8 +305,6 @@ private:
 	static void validateEndTime(DateTime end) {
 		tm then_tm = convertToCTime(end);
 
-		then_tm.tm_isdst = 1;
-
 		time_t then = mktime(&then_tm);
 		time_t now = time(nullptr);
 
