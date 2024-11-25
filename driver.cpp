@@ -8,11 +8,6 @@
 
 using namespace std;
 
-<<<<<<< HEAD
-int main(){
-    int foo;
-}
-=======
 void printLogFileData() {
 	for (auto &log : Logs::logs) {
 		cout << "File: " << log.name << endl;
@@ -42,4 +37,3 @@ int main() {
 		cout << errorMessage << endl;
 	}
 }
->>>>>>> refs/remotes/origin/dev
