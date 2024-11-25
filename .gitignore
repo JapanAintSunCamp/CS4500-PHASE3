@@ -33,3 +33,10 @@
 
 # VS Code Directories
 /.vscode
+
+# Test Files
+/TestFiles
+*.csv
+/.DS_Store
+/.project
+*.txt
