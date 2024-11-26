@@ -10,12 +10,20 @@ class Report2 {
 public:
   static map<char, int> codesMap;
   static vector<vector<string>> reportData;
+  static ReportMetadata metadata;
 
   static void generateReport() {
+    metadata.filename = "PhaseThreeReport2";
+    metadata.title = "Report 2";
+    metadata.explanation = "This report shows how many minutes total were spent by all team members on each of the activity codes.";
+    metadata.classId = Logs::logs[0].classId;
+
     vector<string> headers = {"Activity Code", "Minutes Spent By All Team Members"};
     reportData.push_back(headers);
 
 		for (auto &log : Logs::logs) {
+      metadata.people.push_back(getFullName(log.firstName, log.lastName));
+
 			for (Activity activity : log.activities) {
 				codesMap[activity.code] += activity.minutes;
 			}
@@ -25,8 +33,12 @@ public:
       reportData.push_back({string() + codeAggregate.first, to_string(codeAggregate.second)});
     }
 
-    Report::buildReport(reportData, "PhaseThreeReport2");
+    Report::buildReport(reportData, metadata);
   }
+
+  static string getFullName(string firstName, string lastName) {
+		return firstName + " " + lastName;
+	}
 };
 
 vector<vector<string>> Report2::reportData;
@@ -47,3 +59,4 @@ map<char, int> Report2::codesMap = {
   {'C', 0},
   {'D', 0}
 };
+ReportMetadata Report2::metadata;
