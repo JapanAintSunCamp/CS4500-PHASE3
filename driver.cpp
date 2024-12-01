@@ -6,6 +6,8 @@
 #include "report_3.cpp"
 #include "report_5.cpp"
 #include "report.cpp"
+#include "graph_A.cpp"
+#include "graph_C.cpp"
 
 using namespace std;
 
@@ -35,6 +37,8 @@ int main() {
 		Report2::generateReport();
 		Report3::generateReport();
 		Report5::generateReport();
+		GraphA::generateGraph();
+		GraphC::generateGraph();
 	} catch(const string &errorMessage) {
 		cout << errorMessage << endl;
 	}
