@@ -4,6 +4,7 @@
 #include "validation.cpp"
 #include "report_2.cpp"
 #include "report_3.cpp"
+#include "report_5.cpp"
 #include "report.cpp"
 
 using namespace std;
@@ -33,6 +34,7 @@ int main() {
 		Validator::validateFiles();
 		Report2::generateReport();
 		Report3::generateReport();
+		Report5::generateReport();
 	} catch(const string &errorMessage) {
 		cout << errorMessage << endl;
 	}
