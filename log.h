@@ -11,6 +11,9 @@ struct Activity {
   char code;
   time_t date;    // Using time_t to represent DateTime
   time_t minutes; // Duration
+  time_t startTime; // Time the activity started
+  time_t endTime; // Time the activity ended
+  int numberOfParticipants; // Number of participants (default = 1)
 };
 
 // Define the Log class
