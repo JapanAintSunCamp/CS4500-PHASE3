@@ -3,7 +3,11 @@
 #include <vector>
 #include "log.h"
 #include "report.h"
-
+//Includes for the Graph_B work around
+#include <iostream>
+#include <fstream>
+#include <deque>
+//End includes for the Graph_B work around
 using namespace std;
 
 class Report3 {
@@ -38,7 +42,31 @@ public:
 
 			reportData.push_back(userData);
 		}
-
+		//GRAPH_B CSV FILE FUNCTION
+		//Justin
+		//This code is a bit of a hack on my part, I just needed a
+		//PhaseThreeReportThree.csv file to be created in order for
+		//Graph_B To work so I included it in here since 
+		//this has the relevant informaiton
+		ofstream PhaseThreeReportThreeCsv("PhaseThreeReportThree.csv", ios_base::out);
+		deque<string> names;
+		for(string name : metadata.people){
+			names.push_back(name);
+		}
+		for( char c : {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D'} ){
+		PhaseThreeReportThreeCsv << c + ',';
+		}
+		PhaseThreeReportThreeCsv << "\n";
+		for(vector<string> row : reportData){
+			PhaseThreeReportThreeCsv << names.front() + ',';
+			names.pop_front();
+			for(string num : row){
+				PhaseThreeReportThreeCsv << num + ',';
+			}
+			PhaseThreeReportThreeCsv << "\n";
+		}
+		PhaseThreeReportThreeCsv.close();
+		//END GRAPH_B CSV FILE FUNCTION
 		Report::buildReport(reportData, metadata);
 	}
 

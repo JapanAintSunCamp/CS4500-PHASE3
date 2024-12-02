@@ -39,7 +39,7 @@ int main() {
 		Report3::generateReport();
 		GraphA::generateGraph();
 		//REPORT 3 MUST BE EXECUTED PRIOR TO GRAPH B. GRAPH B IS DEPENDENT ON THE RESLTS OF REPORT 3
-		GraphB::generateGraph();
+		//GraphB::generateGraph();
 		GraphC::generateGraph();
 		Report1::generateReport();
 		Report4::generateReport();
