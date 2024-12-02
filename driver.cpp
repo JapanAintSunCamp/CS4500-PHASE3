@@ -37,8 +37,8 @@ int main() {
 		Report2::generateReport();
 		Report3::generateReport();
 		Report5::generateReport();
-		GraphA::generateGraph();
-		GraphC::generateGraph();
+		// GraphA::generateGraph();
+		// GraphC::generateGraph();
 	} catch(const string &errorMessage) {
 		cout << errorMessage << endl;
 	}

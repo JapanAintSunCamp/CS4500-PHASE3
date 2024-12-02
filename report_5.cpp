@@ -31,6 +31,18 @@ struct Meeting {
         : author(author), date(date), startTime(startTime), endTime(endTime), numberOfParticipants(numberOfParticipants), totalElapsedTime(totalElapsedTime) {}
 };
 
+/*
+* Supporting exception class for error handling
+*/
+class MeetingException : public std::exception {
+    private:
+        std::string message;
+    public:
+        explicit MeetingException(const std::string& msg) : message(msg) {}
+        virtual const char* what() const noexcept override {
+            return message.c_str();
+        }
+};
 
 /*
 * Main class for Report 5
@@ -160,9 +172,10 @@ class Report5 {
             * Returns a Meeting object with the final meeting details
         */
         static Meeting createMeeting(const std::vector<Meeting>& meetings) {
+            string author = meetings[0].author;
             time_t date = meetings[0].date;
-            time_t actualStartTime;
-            time_t actualEndTime;
+            time_t actualStartTime = meetings[0].startTime;
+            time_t actualEndTime = meetings[0].endTime;
             int numberOfParticipants = meetings[0].numberOfParticipants;
             time_t totalElapsedTime = 0;
 
@@ -175,7 +188,7 @@ class Report5 {
 
             totalElapsedTime = actualEndTime - actualStartTime;
 
-            return Meeting(date, actualStartTime, actualEndTime, numberOfParticipants, totalElapsedTime);
+            return Meeting(author, date, actualStartTime, actualEndTime, numberOfParticipants, totalElapsedTime);
         }
         /*
             * Get the full name of a person
@@ -238,7 +251,6 @@ class Report5 {
         };
 
     public:
-        static map<char, int> codesMap;
         static ReportMetadata metadata;
 
     static void generateReport() {
@@ -300,6 +312,7 @@ class Report5 {
             for (const Meeting& meeting : potentialMeetings) {
                 errorMessages += "ERROR: Meeting entry for " + meeting.author + " | Date: " + std::string(std::ctime(&meeting.date)) + " | Start Time: " + std::string(std::ctime(&meeting.startTime)) + " | End Time: " + std::string(std::ctime(&meeting.endTime)) + " | Participants: " + std::to_string(meeting.numberOfParticipants) + " does not match any other recorded meeting. Please verify the entry and try again.\n";
             }
+
             throw MeetingException(errorMessages);
         }
 
@@ -312,17 +325,4 @@ class Report5 {
         // Print report to file
         buildReport(confirmedMeetings, metadata);
     }
-};
-
-/*
-* Supporting exception class for error handling
-*/
-class MeetingException : public std::exception {
-    private:
-        std::string message;
-    public:
-        explicit MeetingException(const std::string& msg) : message(msg) {}
-        virtual const char* what() const noexcept override {
-            return message.c_str();
-        }
 };

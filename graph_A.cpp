@@ -1,101 +1,101 @@
-#include <map>
-#include <iostream>
-#include <fstream>
-#include <cmath>
-#include "log.h"
+// #include <map>
+// #include <iostream>
+// #include <fstream>
+// #include <cmath>
+// #include "log.h"
 
 
-class GraphA {
-public:
-  static map<string, int> minutesMap;
+// class GraphA {
+// public:
+//   static map<string, int> minutesMap;
 
-  static void generateGraph() {
-    for (auto const &log : Logs::logs) {
-      string fullName = getFullName(log.firstName, log.lastName);
-      minutesMap[fullName] = 0;
-    }
+//   static void generateGraph() {
+//     for (auto const &log : Logs::logs) {
+//       string fullName = getFullName(log.firstName, log.lastName);
+//       minutesMap[fullName] = 0;
+//     }
 
-    for (auto const &log : Logs::logs) {
-      string fullName = getFullName(log.firstName, log.lastName);
-      
-      for (auto const &activity : log.activities) {
-        minutesMap[fullName] += activity.minutes;
-      }
-    }
+//     for (auto const &log : Logs::logs) {
+//       string fullName = getFullName(log.firstName, log.lastName);
 
-    drawChart();
-  }
+//       for (auto const &activity : log.activities) {
+//         minutesMap[fullName] += activity.minutes;
+//       }
+//     }
 
-  static void drawChart() {
-    int yAxisLabelWidth = 0;
-    int maxMinutes = 0;
+//     drawChart();
+//   }
 
-    for (const auto& [name, minutes] : minutesMap) {
-      if (yAxisLabelWidth < name.length()) {
-        yAxisLabelWidth = name.length();
-      }
+//   static void drawChart() {
+//     int yAxisLabelWidth = 0;
+//     int maxMinutes = 0;
 
-      if (maxMinutes < minutes) {
-        maxMinutes = minutes;
-      }
-    }
+//     for (const auto& [name, minutes] : minutesMap) {
+//       if (yAxisLabelWidth < name.length()) {
+//         yAxisLabelWidth = name.length();
+//       }
 
-    maxMinutes = findMax(maxMinutes);
+//       if (maxMinutes < minutes) {
+//         maxMinutes = minutes;
+//       }
+//     }
 
-    for (const auto& [name, minutes] : minutesMap) {
-        cout << setw(yAxisLabelWidth) << " " << "|";
-        cout << endl;
-        cout << setw(yAxisLabelWidth) << " " << "|";
-        int num_hashes = ceil((minutes * 100) / (float) maxMinutes);
-        for (int j = 0; j < num_hashes; ++j) {
-            cout << "#";
-        }
-        cout << endl;
-        cout << setw(yAxisLabelWidth) << name << "|";
-        for (int j = 0; j < num_hashes; ++j) {
-            cout << "#";
-        }
-        cout << " (" << minutes << ")";
-        cout << endl;
-        cout << setw(yAxisLabelWidth) << " " << "|";
-        for (int j = 0; j < num_hashes; ++j) {
-            cout << "#";
-        }
-        cout << endl;
-    }
+//     maxMinutes = findMax(maxMinutes);
 
-    cout << setw(yAxisLabelWidth) << " " << "|";
+//     for (const auto& [name, minutes] : minutesMap) {
+//         cout << setw(yAxisLabelWidth) << " " << "|";
+//         cout << endl;
+//         cout << setw(yAxisLabelWidth) << " " << "|";
+//         int num_hashes = ceil((minutes * 100) / (float) maxMinutes);
+//         for (int j = 0; j < num_hashes; ++j) {
+//             cout << "#";
+//         }
+//         cout << endl;
+//         cout << setw(yAxisLabelWidth) << name << "|";
+//         for (int j = 0; j < num_hashes; ++j) {
+//             cout << "#";
+//         }
+//         cout << " (" << minutes << ")";
+//         cout << endl;
+//         cout << setw(yAxisLabelWidth) << " " << "|";
+//         for (int j = 0; j < num_hashes; ++j) {
+//             cout << "#";
+//         }
+//         cout << endl;
+//     }
 
-    for (int i = 0; i <= 100; i++) {
-      cout << "_";
-    }
+//     cout << setw(yAxisLabelWidth) << " " << "|";
 
-    cout << endl << setw(yAxisLabelWidth) << " ";
+//     for (int i = 0; i <= 100; i++) {
+//       cout << "_";
+//     }
 
-    int interval = 0;
+//     cout << endl << setw(yAxisLabelWidth) << " ";
 
-    for (int i = 0; i <= 100; i += 5) {
-      cout << left << setw(5) << interval;
-      interval += (maxMinutes * 5 / 100);
-    }
+//     int interval = 0;
 
-    cout << endl << endl;
-  }
+//     for (int i = 0; i <= 100; i += 5) {
+//       cout << left << setw(5) << interval;
+//       interval += (maxMinutes * 5 / 100);
+//     }
 
-  static int findMax(int maxMinutes) {
-    do {
-      if (maxMinutes % 100 == 0) {
-        return maxMinutes;
-      }
-    } while (maxMinutes++);
+//     cout << endl << endl;
+//   }
 
-    return maxMinutes;
-  }
+//   static int findMax(int maxMinutes) {
+//     do {
+//       if (maxMinutes % 100 == 0) {
+//         return maxMinutes;
+//       }
+//     } while (maxMinutes++);
 
-  static string getFullName(string firstName, string lastName) {
-		return firstName + " " + lastName;
-	} 
-};
+//     return maxMinutes;
+//   }
 
-map<string, int> GraphA::minutesMap;
+//   static string getFullName(string firstName, string lastName) {
+// 		return firstName + " " + lastName;
+// 	}
+// };
+
+// map<string, int> GraphA::minutesMap;
 
