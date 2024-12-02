@@ -48,14 +48,17 @@ public:
 		//PhaseThreeReportThree.csv file to be created in order for
 		//Graph_B To work so I included it in here since 
 		//this has the relevant informaiton
-		ofstream PhaseThreeReportThreeCsv("PhaseThreeReportThree.csv", ios_base::out);
+		ofstream PhaseThreeReportThreeCsv("PhaseThreeReportThreee.csv", ios_base::out);
 		deque<string> names;
+		PhaseThreeReportThreeCsv << flush;
 		for(string name : metadata.people){
 			names.push_back(name);
 		}
-		for( char c : {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D'} ){
+		vector<char> activities = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D'};
+		for( char c : activities ){
 		PhaseThreeReportThreeCsv << c + ',';
 		}
+		PhaseThreeReportThreeCsv << "\n" +',' << "\n" <<"abc";
 		PhaseThreeReportThreeCsv << "\n";
 		for(vector<string> row : reportData){
 			PhaseThreeReportThreeCsv << names.front() + ',';

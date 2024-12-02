@@ -71,4 +71,5 @@ void Report::buildReport(vector<vector<string>> data, ReportMetadata metadata) {
   reportFile << "Dat Nguyen" << endl;
   reportFile << "Keewon Owens" << endl;
   reportFile << "Rett Swyers" << endl;
+  reportFile.close();
 }

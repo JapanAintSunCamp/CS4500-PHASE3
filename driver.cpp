@@ -6,7 +6,7 @@
 #include "report_3.cpp"
 #include "report.cpp"
 #include "graph_A.cpp"
-#include "graph_B.cpp"
+//#include "graph_B.cpp"
 #include "graph_C.cpp"
 #include "Report1.cpp"
 #include "Report4.cpp"
