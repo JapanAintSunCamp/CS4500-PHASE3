@@ -54,6 +54,8 @@ public:
             return "\033[48;5;33m  "; // Medium Blue
         else if (value >= maxVal * 4 / 5 && value <= maxVal)
             return "\033[48;5;19m  "; // Dark Blue
+
+        return "";
     }
 
     // Function to print the meat hap
