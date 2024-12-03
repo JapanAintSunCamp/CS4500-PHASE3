@@ -2,9 +2,10 @@
 #include <vector>
 #include <string>
 #include <iomanip>
+#include <stdexcept>
+#include <iostream>
 #include "log.h"
 #include "report.h"
-
 
 using namespace std;
 
@@ -14,6 +15,10 @@ public:
     static ReportMetadata metadata;
 
     static void generateReport() {
+        if (Logs::logs.empty()) {
+            throw runtime_error("Error: No logs available to generate the report.");
+        }
+
         metadata.filename = "PhaseThreeReport1";
         metadata.title = "Report 1";
         metadata.explanation = "This report lists each name and the total number of minutes entered into their time log.";
@@ -28,12 +33,18 @@ public:
             string fullName = getFullName(log.firstName, log.lastName);
             metadata.people.push_back(fullName);
 
+            if (log.activities.empty()) {
+                cout << "Warning: No activities found for " << fullName << endl;
+                continue;
+            }
+
             for (const auto &activity : log.activities) {
-                memberMinutes[fullName] += activity.minutes;
+                string identifier = log.classId + " - " + fullName; // Unique identifier
+                memberMinutes[identifier] += activity.minutes;
             }
         }
 
-         for (const auto &entry : memberMinutes) {
+        for (const auto &entry : memberMinutes) {
             reportData.push_back({entry.first, to_string(entry.second)});
         }
 
