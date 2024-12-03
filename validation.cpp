@@ -42,7 +42,7 @@ private:
 	/**
 	 * Searches in the current directory for log files and throws an error if none, only one, or more than ten are found
 	 * Also throws an error if a file is found with the same name
-	 * 
+	 *
 	 * Populates the list of Logs
 	 *
 	 * Sources for implementation:
@@ -105,7 +105,7 @@ private:
 						throw string("[ERROR] More than one file found with the same first and last names: " + previousLog.name + " and " + log.name);
 					}
 				}
-				
+
 				log.setFirstName(firstName);
 				log.setLastName(lastName);
 			} else {
@@ -204,6 +204,7 @@ private:
 		// VALIDATE NUMBER OF PARTICIPANTS
 		if (getline(stream, token, ',')) {
 			validateNumberOfParticipants(token);
+			activity.numberOfParticipants = stoi(token);
 		} else {
 			throw Error {"Missing Activity Code Column"};
 		}
@@ -244,7 +245,7 @@ private:
 		if (!regex_match(date, match, pattern)) {
 			throw Error {"Invalid Date Format."};
 		}
-		
+
 		int month = stoi(match[1]);
 		int day = stoi(match[2]);
 		int year = stoi(match[3]);
@@ -340,6 +341,7 @@ private:
 	 *
 	 */
 	static void validateNumberOfParticipants(const string numberOfParticipants) {
+
 		regex pattern("^(-?[0-9]+)$");
 		smatch match;
 
@@ -448,9 +450,9 @@ private:
 
 	/**
 	 * Converts a DateTime structure to C time
-	 * 
+	 *
 	 * Parameter DateTime
-	 * 
+	 *
 	 * Return tm
 	 */
 	static tm convertToCTime(DateTime dateTime) {

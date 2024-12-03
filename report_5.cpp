@@ -15,6 +15,7 @@
 #include <fstream>
 #include <sstream>
 #include <exception>
+#include <stdexcept>
 
 /*
 * Meeting structure to hold meeting details
@@ -230,11 +231,11 @@ class Report5 {
             for (size_t i = 0; i < meetingsToPrint.size(); ++i) {
                 const auto& meeting = meetingsToPrint[i];
                 reportFile << "Meeting: " << (i + 1)
-                           << " | Date: " << std::ctime(&meeting.date)
-                           << " | Start Time: " << std::ctime(&meeting.startTime)
-                           << " | End Time: " << std::ctime(&meeting.endTime)
+                           << " | Date: " << getFormattedDate(meeting.date)
+                           << " | Start Time: " << getFormattedTime(meeting.startTime)
+                           << " | End Time: " << getFormattedTime(meeting.endTime)
                            << " | Number of Participants: " << meeting.numberOfParticipants
-                           << " | Total Elapsed Time: " << meeting.totalElapsedTime << " minutes " << endl;
+                           << " | Total Elapsed Time: " << getTotalTime(meeting.totalElapsedTime) << " minutes " << endl;
             }
 
             // Print report footer
@@ -249,15 +250,51 @@ class Report5 {
 
             reportFile.close();
         };
+        /*
+        * Helper function to format time
+        *
+        * Parameter time - a time_t object representing the time to format
+        *
+        * Returns a string with the formatted time
+        */
+        static std::string getFormattedTime(const time_t& time) {
+            struct tm* timeInfo = localtime(&time); // Convert time_t to tm structure
+
+            char buffer[6]; // Buffer to hold the formatted time string (hh:mm)
+            strftime(buffer, sizeof(buffer), "%H:%M", timeInfo); // Format as "hh:mm"
+
+            return std::string(buffer);
+        }
+        /*
+        */
+        static std::string getFormattedDate(time_t timeValue) {
+            struct tm *timeInfo = localtime(&timeValue);
+            char buffer[11]; // Buffer to hold the formatted date string (mm/dd/yyyy)
+            strftime(buffer, sizeof(buffer), "%m/%d/%Y", timeInfo);
+
+            return std::string(buffer);
+        }
+        /*
+        */
+        static std::string getTotalTime(time_t timeValue) {
+            struct tm timeInfo;
+            localtime_s(&timeInfo, &timeValue); // Convert time_t to tm structure
+
+            // Calculate total minutes
+            int totalMinutes = timeInfo.tm_hour * 60 + timeInfo.tm_min;
+
+            return std::to_string(totalMinutes);
+        }
+
 
     public:
-        static ReportMetadata metadata;
 
     static void generateReport() {
-        metadata.filename = "PhaseThreeReport5";
-        metadata.title = "Report 5";
-        metadata.explanation = "This report displays a list of all meetings performed by the team members.";
-        metadata.classId = Logs::logs[0].classId;
+        string filename = "PhaseThreeReport5";
+        string title = "Report 5";
+        string explanation = "This report displays a list of all meetings performed by the team members.";
+        string classId = Logs::logs[0].classId;
+        vector<string> people;
         vector<Meeting> potentialMeetings;
         vector<Meeting> confirmedMeetings;
 
@@ -265,10 +302,11 @@ class Report5 {
         for (auto &log : Logs::logs) {
             // Get the name of each person from their log file
             string fullName = getFullName(log.firstName, log.lastName);
-            metadata.people.push_back(fullName);
+            people.push_back(fullName);
 
             for (Activity activity : log.activities) {
                 if ( activity.code == '4' ) {
+
                     potentialMeetings.push_back(Meeting(fullName, activity.date, activity.startTime, activity.endTime, activity.numberOfParticipants, 0));
                 }
             }
@@ -298,19 +336,27 @@ class Report5 {
             confirmedMeetings.push_back(newMeeting);
 
             // Remove relatedMeetings from potentialMeetings
-            potentialMeetings.erase(
-                std::remove_if(potentialMeetings.begin(), potentialMeetings.end(),
-                            [&relatedMeetings](const Meeting& m) {
-                                return std::find(relatedMeetings.begin(), relatedMeetings.end(), m) != relatedMeetings.end();
-                            }),
-                potentialMeetings.end());
+            for (const Meeting& meeting : relatedMeetings) {
+                auto it = std::find_if(potentialMeetings.begin(), potentialMeetings.end(),
+                    [&meeting](const Meeting& m) {
+                        return m.author == meeting.author &&
+                               m.date == meeting.date &&
+                               m.startTime == meeting.startTime &&
+                               m.endTime == meeting.endTime &&
+                               m.numberOfParticipants == meeting.numberOfParticipants &&
+                               m.totalElapsedTime == meeting.totalElapsedTime;
+                    });
+                if (it != potentialMeetings.end()) {
+                    potentialMeetings.erase(it);
+                }
+            }
         }
 
         // If any potenial meetings remain, generate an error and inform the user
         if (!potentialMeetings.empty()) {
             string errorMessages;
             for (const Meeting& meeting : potentialMeetings) {
-                errorMessages += "ERROR: Meeting entry for " + meeting.author + " | Date: " + std::string(std::ctime(&meeting.date)) + " | Start Time: " + std::string(std::ctime(&meeting.startTime)) + " | End Time: " + std::string(std::ctime(&meeting.endTime)) + " | Participants: " + std::to_string(meeting.numberOfParticipants) + " does not match any other recorded meeting. Please verify the entry and try again.\n";
+                errorMessages += "ERROR: Meeting entry for " + meeting.author + " | Date: " + getFormattedTime(meeting.date) + " | Start Time: " + getFormattedTime(meeting.startTime) + " | End Time: " + getFormattedTime(meeting.endTime) + " | Participants: " + std::to_string(meeting.numberOfParticipants) + " does not match any other recorded meeting. Please verify the entry and try again.\n";
             }
 
             throw MeetingException(errorMessages);
@@ -323,6 +369,6 @@ class Report5 {
         });
 
         // Print report to file
-        buildReport(confirmedMeetings, metadata);
+        buildReport(confirmedMeetings, { filename, title, classId, people, explanation });
     }
 };
