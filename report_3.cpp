@@ -1,67 +1,88 @@
-// #include <map>
-// #include <string>
-// #include <vector>
-// #include "log.h"
-// #include "report.h"
+#include <map>
+#include <string>
+#include <vector>
+#include "log.h"
+#include "report.h"
 
-// using namespace std;
+using namespace std;
 
-// class Report3 {
-// public:
-// 	static vector<char> codes;
-// 	static vector<vector<string>> reportData;
-// 	static ReportMetadata metadata;
+class Report3 {
+public:
+	static vector<char> codes;
+	static vector<vector<string>> reportData;
+	static ReportMetadata metadata;
 
-//   static void generateReport() {
-//     metadata.filename = "PhaseThreeReport3";
-//     metadata.title = "Report 3";
-//     metadata.explanation = "This report shows how many minutes were spent by each team member on each of the activity codes.";
-//     metadata.classId = Logs::logs[0].classId;
+  static void generateReport() {
+    metadata.filename = "PhaseThreeReport3";
+    metadata.title = "Report 3";
+    metadata.explanation = "This report shows how many minutes were spent by each team member on each of the activity codes.";
+    metadata.classId = Logs::logs[0].classId;
 
-// 		vector<string> headers = {"Names/Activity Code"};
+		vector<string> headers = {"Names/Activity Code"};
 
-// 		for (char code : codes) {
-// 			headers.push_back(string() + code);
-// 		}
+		for (char code : codes) {
+			headers.push_back(string() + code);
+		}
 
-// 		reportData.push_back(headers);
+		reportData.push_back(headers);
 
-// 		for (auto &log : Logs::logs) {
-// 			metadata.people.push_back(getFullName(log.firstName, log.lastName));
-// 			map<char, int> aggregatedActivities = aggregateActivities(log);
+		for (auto &log : Logs::logs) {
+			metadata.people.push_back(getFullName(log.firstName, log.lastName));
+			map<char, int> aggregatedActivities = aggregateActivities(log);
 
-// 			vector<string> userData = {getFullName(log.firstName, log.lastName)};
+			vector<string> userData = {getFullName(log.firstName, log.lastName)};
 
-// 			for (auto const &activity : aggregatedActivities) {
-// 				userData.push_back(to_string(activity.second));
-// 			}
+			for (auto const &activity : aggregatedActivities) {
+				userData.push_back(to_string(activity.second));
+			}
 
-// 			reportData.push_back(userData);
-// 		}
+			reportData.push_back(userData);
+		}
 
-// 		Report::buildReport(reportData, metadata);
-// 	}
+		generateCsv();
 
+		Report::buildReport(reportData, metadata);
+	}
 
-// 	static map<char, int> aggregateActivities(Log log) {
-// 			map<char, int> activityMap;
+	static void generateCsv() {
+		ofstream stringFile("PhaseThreeReportThree.csv", ios_base::out);
 
-// 			for (char code : codes) {
-// 				activityMap.insert({code, 0});
-// 			}
+		if (stringFile.fail()) {
+			throw string("[ERROR] Error opening the file");
+		}
 
-// 			for (Activity activity : log.activities) {
-// 				activityMap[activity.code] += activity.minutes;
-// 			}
+		for (vector<string> row : reportData) {
+			stringFile << row.at(0);
 
-// 			return activityMap;
-// 	}
+			for (int i = 1; i < row.size(); i++) {
+				stringFile << string() + "," + row[i];
+			}
 
-// 	static string getFullName(string firstName, string lastName) {
-// 		return firstName + " " + lastName;
-// 	}
-// };
+			stringFile << '\n';
+		}
 
-// vector<vector<string>> Report3::reportData;
-// vector<char> Report3::codes = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D'};
-// ReportMetadata Report3::metadata;
+		stringFile.close();
+	}
+
+	static map<char, int> aggregateActivities(Log log) {
+			map<char, int> activityMap;
+
+			for (char code : codes) {
+				activityMap.insert({code, 0});
+			}
+
+			for (Activity activity : log.activities) {
+				activityMap[activity.code] += activity.minutes;
+			}
+
+			return activityMap;
+	}
+
+	static string getFullName(string firstName, string lastName) {
+		return firstName + " " + lastName;
+	}
+};
+
+vector<vector<string>> Report3::reportData;
+vector<char> Report3::codes = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D'};
+ReportMetadata Report3::metadata;

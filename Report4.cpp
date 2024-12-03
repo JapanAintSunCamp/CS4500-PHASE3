@@ -1,139 +1,86 @@
+#include <map>
+#include <vector>
+#include <string>
+#include <iomanip>
+#include <iostream>
+#include <ctime>
+#include <stdexcept>
+#include "log.h"
+#include "report.h"
+
+using namespace std;
+
+class Report4 {
+public:
+    static vector<vector<string>> reportData;
+    static ReportMetadata metadata;
+
+    static void generateReport() {
+        if (Logs::logs.empty()) {
+            throw runtime_error("No logs available to generate the report.");
+        }
+
+        metadata.filename = "PhaseThreeReport4";
+        metadata.title = "Report 4";
+        metadata.explanation = "This report shows total team minutes for each day of the week.";
+        metadata.classId = Logs::logs[0].classId;
+
+        // Headers for the report
+        vector<string> headers = {"Day of the Week", "Total Team Minutes"};
+        reportData.push_back(headers);
+
+        // Map to store total minutes per day
+        map<string, int> weeklyTotals;
+
+        // Process each log
+        for (const auto &log : Logs::logs) {
+            metadata.people.push_back(getFullName(log.firstName, log.lastName));
+
+            for (const auto &activity : log.activities) {
+                if (activity.date == 0) { // Check for invalid time_t value
+                    cerr << "Warning: Skipping activity with invalid date." << endl;
+                    continue;
+                }
+
+                try {
+                    string dayOfWeek = getDayOfWeek(activity.date); // Use updated getDayOfWeek
+                    weeklyTotals[dayOfWeek] += activity.minutes;
+                } catch (const exception &e) {
+                    cerr << "Error processing activity date: " << e.what() << endl;
+                    continue; // Skip invalid dates
+                }
+            }
+        }
+
+        // Populate the report data
+        for (const auto &entry : weeklyTotals) {
+            reportData.push_back({entry.first, to_string(entry.second)});
+        }
+
+        // Build the report using the shared Report class
+        Report::buildReport(reportData, metadata);
+    }
+
+    static string getFullName(const string &firstName, const string &lastName) {
+        return firstName + " " + lastName;
+    }
+
+    static string getDayOfWeek(const time_t &timestamp) {
+        // Convert time_t to a tm structure using localtime
+        tm *timeStruct = localtime(&timestamp);
+        if (timeStruct == nullptr) {
+            throw runtime_error("Failed to convert time_t to tm structure.");
+        }
+
+        // Days of the week
+        static const string days[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+        return days[timeStruct->tm_wday]; // Return the day of the week
+    }
+};
+
+// Define static members
+vector<vector<string>> Report4::reportData;
+ReportMetadata Report4::metadata;
 
 
 
-
-// #include <iostream>
-// #include <fstream>
-// #include <sstream>
-// #include <string>
-// #include <vector>
-// #include <map>
-// #include <iomanip>
-// #include <dirent.h>
-
-// using namespace std;
-
-// class Report4{
-// public:
-//     struct TimeLogEntry {
-//             string dayOfWeek;
-//             int minutes;
-//         };
-//         struct TimeLog {
-//             string firstName;
-//             string lastName;
-//             vector<TimeLogEntry> entries;
-//         };
-
-//         static bool parseLogFile(const string& filePath, TimeLog& log) {
-//             ifstream file(filePath.c_str());
-//             if (!file.is_open()) {
-//                 cerr << "Error: Could not open file " << filePath << endl;
-//                 return false;
-//             }
-
-//             string line;
-//             bool firstLine = true;
-//             while (getline(file, line)) {
-//                 stringstream ss(line);
-//                 if (firstLine) {
-//                     firstLine = false;
-//                     ss >> log.firstName >> log.lastName;
-//                 } else {
-//                     string day;
-//                     int minutes;
-//                     if (ss >> day >> minutes) {
-//                         log.entries.push_back({day, minutes});
-
-//                     } else {
-//                             cerr << "Error: Invalid time format in file " << filePath << endl;
-//                             return false;
-//                         }
-//                     }
-//                 }
-
-//                 return true;
-//             }
-//         static void generateReport4(const vector<TimeLog>& logs, const string& outputPath) {
-//             map<string, int> weeklyMinutes;
-//             weeklyMinutes["Sunday"] = 0;
-//             weeklyMinutes["Monday"] = 0;
-//             weeklyMinutes["Tuesday"] = 0;
-//             weeklyMinutes["Wednesday"] = 0;
-//             weeklyMinutes["Thursday"] = 0;
-//             weeklyMinutes["Friday"] = 0;
-//             weeklyMinutes["Saturday"] = 0;
-
-//         for (size_t i = 0; i < logs.size(); ++i) {
-//             for (size_t j = 0; j < logs[i].entries.size(); ++j) {
-//                 string day = logs[i].entries[j].dayOfWeek;
-//                 int minutes = logs[i].entries[j].minutes;
-//                 if (weeklyMinutes.find(day) != weeklyMinutes.end()) {
-//                     weeklyMinutes[day] += minutes;
-//                 } else {
-//                     cerr << "Warning: Invalid day of the week '" << day << "' in log." << endl;
-//                 }
-//             }
-//         }
-
-
-//     ofstream report(outputPath.c_str());
-//     if (!report.is_open()) {
-//         cerr << "Error: Could not create report file " << outputPath << endl;
-//         return;
-//     }
-
-//     report << "Report 4: Total Team Minutes by Day of the week\n";
-//     report << "-------------------------------------------------\n";
-//     report << setw(15) << left << "Day of week"
-//             << setw(10) << "Total Minutes\n";
-//     report << "--------------------------------------------------\n";
-
-//     for (map<string, int>::iterator it = weeklyMinutes.begin(); it != weeklyMinutes.end(); ++it) {
-//         report << setw(15) << left << it->first
-//         << setw(10) << it->second << "\n";
-//         }
-
-//     report.close();
-
-//     cout << "report 4 generated at: " << outputPath << endl;
-//     }
-
-//     static int generateReport() {
-//         string directory = "."; // Current directory
-//         vector<TimeLog> logs;
-
-//         // Open directory and read files
-//         DIR* dir;
-//         struct dirent* ent;
-
-//         if ((dir = opendir(directory.c_str())) != NULL) {
-//             while ((ent = readdir(dir)) != NULL) {
-//                 string fileName = ent->d_name;
-
-//                 // Only process files ending with "Log.csv"
-//                 if (fileName.find("Log.csv") != string::npos) {
-//                     TimeLog log;
-//                     if (parseLogFile(fileName, log)) {
-//                         logs.push_back(log);
-//                     } else {
-//                         cerr << "Skipping file due to errors: " << fileName << endl;
-//                     }
-//                 }
-//             }
-//             closedir(dir);
-//         } else {
-//             cerr << "Error: Could not open directory " << directory << endl;
-//             return 1;
-//         }
-
-//         if (logs.empty()) {
-//             cerr << "Error: No valid time log files found in the directory." << endl;
-//             return 1;
-//         }
-
-//         generateReport4(logs, "PhaseThreeReport4.txt");
-
-//         return 0;
-//     }
-// };
