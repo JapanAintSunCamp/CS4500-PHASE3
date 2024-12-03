@@ -151,6 +151,8 @@ public:
         printHeatmapLegend(activityCodes);
         cout << "\033[0m";
 
+        file.close();
+
         filesystem::remove("PhaseThreeReportThree.csv");
 
         return 0;
