@@ -1,3 +1,10 @@
+/*
+ * GroupNumber: 1
+ * People working on the feature: Justin Macapanpan
+ * Class: CS 4500
+ * Date: 11/30/2024
+*/
+
 #include <map>
 #include <iostream>
 #include <fstream>
@@ -5,6 +12,9 @@
 #include "log.h"
 
 
+/**
+ * Generates a bar chart showing how many minutes were spent by each team member total.
+ */
 class GraphA {
 public:
   static map<string, int> minutesMap;

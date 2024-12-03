@@ -1,3 +1,10 @@
+/*
+ * GroupNumber: 1
+ * People working on the feature: Dat Nguyen
+ * Class: CS 4500
+ * Date: 11/30/2024
+*/
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -8,6 +15,10 @@
 #include <filesystem>
 using namespace std;
 
+/**
+ * Generates a heat map showing how many minutes were spent by each team member on each of the activity codes.
+ * NOTE: the colors are rendered with ASCII escape codes and may not appear correctly in every terminal on every operating system. 
+ */
 class GraphB{
 public:
     static void printHeatmapLegend(vector<vector<int>> activityCodes) {  // LEGEND FOR HEAT MAP

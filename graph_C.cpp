@@ -1,3 +1,10 @@
+/*
+ * GroupNumber: 1
+ * People working on the feature: Justin Macapanpan
+ * Class: CS 4500
+ * Date: 11/30/2024
+*/
+
 #include <vector>
 #include <iostream>
 #include <map>
@@ -6,7 +13,9 @@
 
 using namespace std;
 
-
+/**
+ * Generates a bar chart showing how many minutes were spent by all team members on a given date.
+ */
 class GraphC {
 public:
   static map<string, int> datesMap;

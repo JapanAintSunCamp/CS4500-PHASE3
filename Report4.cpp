@@ -1,3 +1,10 @@
+/*
+ * GroupNumber: 1
+ * People working on the feature: Keewon Owens
+ * Class: CS 4500
+ * Date: 11/30/2024
+*/
+
 #include <map>
 #include <vector>
 #include <string>
@@ -10,6 +17,9 @@
 
 using namespace std;
 
+/**
+ * Generates a table showing how many minutes were spent by each team member on each of the activity codes.
+ */
 class Report4 {
 public:
     static vector<vector<string>> reportData;

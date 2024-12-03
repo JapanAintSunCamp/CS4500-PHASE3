@@ -1,3 +1,10 @@
+/*
+ * GroupNumber: 1
+ * People working on the feature: Keewon Owens
+ * Class: CS 4500
+ * Date: 11/30/2024
+*/
+
 #include <map>
 #include <vector>
 #include <string>
@@ -7,8 +14,9 @@
 #include "log.h"
 #include "report.h"
 
-// using namespace std;
-
+/**
+ * Generates a table listing each name (in the form Firstname Lastname) and the total number of minutes entered into their time log. The time is in minutes.
+ */
 class Report1 {
 public:
     static vector<vector<string>> reportData;

@@ -1,3 +1,10 @@
+/*
+ * GroupNumber: 1
+ * People working on the feature: Vladic Kostin
+ * Class: CS 4500
+ * Date: 11/30/2024
+*/
+
 #include <map>
 #include <string>
 #include <vector>
@@ -6,6 +13,9 @@
 
 using namespace std;
 
+/**
+   * Generates a table showing how many minutes total were spent by all team members on each of the activity codes.
+ */
 class Report2 {
 public:
   static map<char, int> codesMap;
