@@ -199,7 +199,10 @@ private:
 		// VALIDATE START AND END TIMES
 		activity.minutes = validateStartAndEndTimes(start, end);
 		tm startTm = convertToCTime(start);
+		tm endTm = convertToCTime(end);
 		activity.date =  mktime(&startTm);
+		activity.startTime = mktime(&startTm);
+		activity.endTime = mktime(&endTm);
 
 		// VALIDATE NUMBER OF PARTICIPANTS
 		if (getline(stream, token, ',')) {

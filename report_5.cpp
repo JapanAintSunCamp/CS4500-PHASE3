@@ -30,19 +30,26 @@ struct Meeting {
 
     Meeting(const string author, const time_t& date, const time_t& startTime, const time_t& endTime, int numberOfParticipants, time_t totalElapsedTime)
         : author(author), date(date), startTime(startTime), endTime(endTime), numberOfParticipants(numberOfParticipants), totalElapsedTime(totalElapsedTime) {}
-};
 
-/*
-* Supporting exception class for error handling
-*/
-class MeetingException : public std::exception {
-    private:
-        std::string message;
-    public:
-        explicit MeetingException(const std::string& msg) : message(msg) {}
-        virtual const char* what() const noexcept override {
-            return message.c_str();
-        }
+    // Equality operator
+    bool operator==(const Meeting& other) const {
+        return author == other.author &&
+               date == other.date &&
+               startTime == other.startTime &&
+               endTime == other.endTime &&
+               numberOfParticipants == other.numberOfParticipants &&
+               totalElapsedTime == other.totalElapsedTime;
+    }
+
+    // Less than operator for sorting
+    bool operator<(const Meeting& other) const {
+        if (date != other.date) return date < other.date;
+        if (startTime != other.startTime) return startTime < other.startTime;
+        if (endTime != other.endTime) return endTime < other.endTime;
+        if (author != other.author) return author < other.author;
+        if (numberOfParticipants != other.numberOfParticipants) return numberOfParticipants < other.numberOfParticipants;
+        return totalElapsedTime < other.totalElapsedTime;
+    }
 };
 
 /*
@@ -132,15 +139,15 @@ class Report5 {
 
             // If the meetings have different headcounts, filter them based on headcount options
             if (headCountMap.size() > 1) {
-                int headcountOverTwo = 0;
+                int headcountTwoOrMore = 0;
                 for (const auto& pair : headCountMap) {
-                    if (pair.second > 2) {
-                        headcountOverTwo++;
+                    if (pair.second >= 2) {
+                        headcountTwoOrMore++;
                     }
                 }
 
                 // If there were multiple meetings, but only one meeting has a head count over 2, set the head count of the other meetings to the base meeting's head count
-                if (headcountOverTwo == 1) {
+                if (headcountTwoOrMore == 1) {
                     for (Meeting meeting : verifiedMeetings) {
                         if (meeting.numberOfParticipants != baseMeeting.numberOfParticipants) {
                             meeting.numberOfParticipants = baseMeeting.numberOfParticipants;
@@ -149,7 +156,7 @@ class Report5 {
                 }
 
                 // If multiple meetings have a head count greater than two, only keep the meetings that have the same head count as the base meeting
-                if (headcountOverTwo > 1) {
+                if (headcountTwoOrMore > 1) {
                     for (Meeting meeting : verifiedMeetings) {
                         if (meeting.numberOfParticipants != baseMeeting.numberOfParticipants) {
                             verifiedMeetings.erase(
@@ -187,7 +194,7 @@ class Report5 {
                 if (actualEndTime > meeting.endTime) actualEndTime = meeting.endTime;
             }
 
-            totalElapsedTime = actualEndTime - actualStartTime;
+            totalElapsedTime = (actualEndTime - actualStartTime) / 60; // convert to minutes
 
             return Meeting(author, date, actualStartTime, actualEndTime, numberOfParticipants, totalElapsedTime);
         }
@@ -235,7 +242,7 @@ class Report5 {
                            << " | Start Time: " << getFormattedTime(meeting.startTime)
                            << " | End Time: " << getFormattedTime(meeting.endTime)
                            << " | Number of Participants: " << meeting.numberOfParticipants
-                           << " | Total Elapsed Time: " << getTotalTime(meeting.totalElapsedTime) << " minutes " << endl;
+                           << " | Total Elapsed Time: " << std::to_string(meeting.totalElapsedTime) << " minutes " << endl;
             }
 
             // Print report footer
@@ -285,6 +292,25 @@ class Report5 {
 
             return std::to_string(totalMinutes);
         }
+        /*
+        */
+        static vector<Meeting> findDifference(const std::vector<Meeting>& meeting1, const std::vector<Meeting>& meeting2) {
+            vector<Meeting> sortedMeeting1 = meeting1;
+            vector<Meeting> sortedMeeting2 = meeting2;
+
+            // Sort both vectors
+            std::sort(sortedMeeting1.begin(), sortedMeeting1.end());
+            std::sort(sortedMeeting2.begin(), sortedMeeting2.end());
+
+            vector<Meeting> difference;
+
+            // Find the difference
+            std::set_difference(sortedMeeting1.begin(), sortedMeeting1.end(),
+                                sortedMeeting2.begin(), sortedMeeting2.end(),
+                                std::back_inserter(difference));
+
+            return difference;
+        }
 
 
     public:
@@ -296,6 +322,7 @@ class Report5 {
         string classId = Logs::logs[0].classId;
         vector<string> people;
         vector<Meeting> potentialMeetings;
+        vector<Meeting> comparedMeetings;
         vector<Meeting> confirmedMeetings;
 
         // Filter all activities that are meetings into a list of potential meetings
@@ -317,49 +344,54 @@ class Report5 {
             Meeting& meeting = potentialMeetings[i];
             vector<Meeting> relatedMeetings;
 
-            // Find all realted meeting logs and add them to the related meetings list
+            // Find all related meeting logs and add them to the related meetings list
             for (size_t j = i + 1; j < potentialMeetings.size(); ++j) {
                 Meeting& otherMeeting = potentialMeetings[j];
 
+                // Don't consider meetings by the same log author
+                if (otherMeeting.author == meeting.author) continue;
+
+                // If the meeting has already been compared, skip it
+                if (std::find(comparedMeetings.begin(), comparedMeetings.end(), otherMeeting) != comparedMeetings.end()) continue;
+
                 if (otherMeeting.date == meeting.date && isRelated(meeting.startTime, meeting.endTime, otherMeeting.startTime, otherMeeting.endTime)) {
-                    relatedMeetings.push_back(meeting);
+                    relatedMeetings.push_back(otherMeeting);
                 }
             }
 
             // Filter relatedMeetings to only contain meeting logs verfied to be the same meeting
             relatedMeetings = verifyMeetingsRelated(meeting, relatedMeetings);
 
-            // Create a meeting log from the related meetings
-            Meeting newMeeting = createMeeting(relatedMeetings);
+            // If there are any related meetings
+            if (!relatedMeetings.empty()) {
+                // add the current meeting to the beginning of the related meetings list
+                relatedMeetings.insert(relatedMeetings.begin(), meeting);
+                // create a new meeting
+                Meeting newMeeting = createMeeting(relatedMeetings);
 
-            // Add the new meeting to the confirmed meetings list
-            confirmedMeetings.push_back(newMeeting);
+                // Add the new meeting to the confirmed meetings list
+                confirmedMeetings.push_back(newMeeting);
 
-            // Remove relatedMeetings from potentialMeetings
-            for (const Meeting& meeting : relatedMeetings) {
-                auto it = std::find_if(potentialMeetings.begin(), potentialMeetings.end(),
-                    [&meeting](const Meeting& m) {
-                        return m.author == meeting.author &&
-                               m.date == meeting.date &&
-                               m.startTime == meeting.startTime &&
-                               m.endTime == meeting.endTime &&
-                               m.numberOfParticipants == meeting.numberOfParticipants &&
-                               m.totalElapsedTime == meeting.totalElapsedTime;
-                    });
-                if (it != potentialMeetings.end()) {
-                    potentialMeetings.erase(it);
-                }
+                // Add relatedMeetings from to list of already compared meetings
+                comparedMeetings.insert(comparedMeetings.end(), relatedMeetings.begin(), relatedMeetings.end());
+
+                // Clear the relatedMeetings list
+                relatedMeetings.clear();
             }
         }
 
         // If any potenial meetings remain, generate an error and inform the user
-        if (!potentialMeetings.empty()) {
+        if (comparedMeetings.size() != potentialMeetings.size()) {
+            // Find the meetings that were not compared
+            vector<Meeting> difference = findDifference(potentialMeetings, comparedMeetings);
             string errorMessages;
-            for (const Meeting& meeting : potentialMeetings) {
-                errorMessages += "ERROR: Meeting entry for " + meeting.author + " | Date: " + getFormattedTime(meeting.date) + " | Start Time: " + getFormattedTime(meeting.startTime) + " | End Time: " + getFormattedTime(meeting.endTime) + " | Participants: " + std::to_string(meeting.numberOfParticipants) + " does not match any other recorded meeting. Please verify the entry and try again.\n";
+
+            // Communicate the error to the user
+            for (const Meeting& meeting : difference) {
+                cout << "ERROR: Meeting entry for " + meeting.author + " | Date: " + getFormattedDate(meeting.date) + " | Start Time: " + getFormattedTime(meeting.startTime) + " | End Time: " + getFormattedTime(meeting.endTime) + " | Participants: " + std::to_string(meeting.numberOfParticipants) + " does not match any other recorded meeting. Please verify the entry and try again." << endl;
             }
 
-            throw MeetingException(errorMessages);
+            return;
         }
 
 
