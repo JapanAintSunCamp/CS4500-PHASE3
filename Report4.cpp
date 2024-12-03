@@ -2,6 +2,9 @@
 #include <vector>
 #include <string>
 #include <iomanip>
+#include <iostream>
+#include <ctime>
+#include <stdexcept>
 #include "log.h"
 #include "report.h"
 
@@ -13,25 +16,39 @@ public:
     static ReportMetadata metadata;
 
     static void generateReport() {
+        if (Logs::logs.empty()) {
+            throw runtime_error("No logs available to generate the report.");
+        }
+
         metadata.filename = "PhaseThreeReport4";
         metadata.title = "Report 4";
         metadata.explanation = "This report shows total team minutes for each day of the week.";
         metadata.classId = Logs::logs[0].classId;
 
-        // Headers for the report
+        // These are the headers for the report
         vector<string> headers = {"Day of the Week", "Total Team Minutes"};
         reportData.push_back(headers);
 
         // Map to store total minutes per day
         map<string, int> weeklyTotals;
 
-        // Process each log
+        // Helps Process each log
         for (const auto &log : Logs::logs) {
             metadata.people.push_back(getFullName(log.firstName, log.lastName));
 
             for (const auto &activity : log.activities) {
-                string dayOfWeek = getDayOfWeek(activity.date); // Function to get the day
-                weeklyTotals[dayOfWeek] += activity.minutes;
+                if (activity.date.empty()) {
+                    cerr << "Warning: Skipping activity with empty date." << endl;
+                    continue;
+                }
+
+                try {
+                    string dayOfWeek = getDayOfWeek(activity.date);
+                    weeklyTotals[dayOfWeek] += activity.minutes;
+                } catch (const exception &e) {
+                    cerr << "Error processing date " << activity.date << ": " << e.what() << endl;
+                    continue;
+                }
             }
         }
 
@@ -49,19 +66,34 @@ public:
     }
 
     static string getDayOfWeek(const string &date) {
-        // Replace this with actual date-to-day mapping logic
-        static const map<int, string> days = {
-            {0, "Sunday"}, {1, "Monday"}, {2, "Tuesday"},
-            {3, "Wednesday"}, {4, "Thursday"},
-            {5, "Friday"}, {6, "Saturday"}
-        };
-        return days.at(rand() % 7); // Dummy logic for now
+        if (date.empty()) {
+            throw runtime_error("Date is empty.");
+        }
+
+        // Parse the date (assumes format "YYYY-MM-DD")
+        int year, month, day;
+        if (sscanf(date.c_str(), "%d-%d-%d", &year, &month, &day) != 3) {
+            throw runtime_error("Invalid date format. Expected YYYY-MM-DD.");
+        }
+
+        // Populate a tm structure
+        tm timeStruct = {};
+        timeStruct.tm_year = year - 1900; // Years since 1900
+        timeStruct.tm_mon = month - 1;    // Months are zero-based
+        timeStruct.tm_mday = day;
+
+        // Convert to time_t to get the day of the week
+        if (mktime(&timeStruct) == -1) {
+            throw runtime_error("Failed to convert date to day of the week.");
+        }
+
+        // Days of the week
+        static const string days[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+        return days[timeStruct.tm_wday];
     }
 };
 
 // Define static members
 vector<vector<string>> Report4::reportData;
 ReportMetadata Report4::metadata;
-
-
 
