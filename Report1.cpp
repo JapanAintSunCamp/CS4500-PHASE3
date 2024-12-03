@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class Report 1 {
+class Report1 {
 public: 
     static vector<vector<string>> reportData;
     static ReportMetadata metadata;
