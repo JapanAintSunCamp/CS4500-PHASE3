@@ -1,113 +1,53 @@
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
+#include <map>
 #include <vector>
-#include <iomanip>
-#include <dirent.h> // For directory traversal
+#include <
+#include <iomanip?
+#include "log.h>
+#include "report.h"
 
 using namespace std;
 
+class Report 1 {
+public: 
+    static vector<vector<string>> reportData;
+    static ReportMetadata metadata;
 
-class Report1{
-public:
+    static void generateReport() {
+        metadata.filename = "PhaseThreeReport1";
+        metadata.title = "Report 1";
+        metadata.explanation = "This report lists each name and the total number of minutes entered into their time log.";
+        metadata.classId = Logs::logs[0].classId;
 
-    struct TimeLog {
-        string firstName;
-        string lastName;
-        int totalMinutes;
-    };
+        vector<string> headers = {"Name", "Total Minutes Logged"};
+        reportData.push_back(headers);
 
-    static bool parseLogFile(const string& filePath, TimeLog& log) {
-        ifstream file(filePath.c_str());
-        if (!file.is_open()) {
-            cerr << "Error: Could not open file " << filePath << endl;
-            return false;
-        }
-        
-        string line;
-        bool firstLine = true;
-        int totalMinutes = 0;
-        
-        while (getline(file, line)) {
-            stringstream ss(line);
-            if (firstLine) {
-                firstLine = false;
-                ss >> log.firstName >> log.lastName;
-            } else {
-                int minutes;
-                if (ss >> minutes) {
-                    totalMinutes += minutes;
-                } else {
-                    cerr << "Error: Invalidddd time format in file " << filePath << endl;
-                    return false;
-                }
-                }
+        map<string, int> memberMinutes;
+
+        for (const auto &log : Logs::logs) {
+            string fullName = getFullName(log.firstName, log.lastName);
+            metadata.people.push_back(fullName);
+
+            for (const auto &activity : log.activities) {
+                memberMinutes[fullName] += activity.minutes;
             }
-            
-            log.totalMinutes = totalMinutes;
-            return true;
-            }
-            static void generateReport1(const vector<TimeLog>& logs, const string& outputPath)  {
-        ofstream report(outputPath.c_str());
-        if (!report.is_open()) {
-            cerr << "Error: Could not create report file " << outputPath << endl;
-            return;
         }
 
-        report << "Report 1: Total Minutes Logged\n";
-        report << "--------------------------------\n";
-        report << setw(20) << left << "Name"
-            << setw(10) << "Total Minutes\n";
-        report << "--------------------------------\n";
-
-        for (size_t i = 0; i < logs.size(); ++i) {
-            report << setw(20) << left << (logs[i].firstName + " " + logs[i].lastName)
-                << setw(10) << logs[i].totalMinutes << "\n";
-        }
-        report.close();
-        cout << "Report 1 generated at: " << outputPath << endl;
-        }
-        
-        static int generateReport() {
-            string directory = ".";
-            vector<TimeLog> logs;
-            
-            DIR* dir;
-            struct dirent* ent;
-            if ((dir = opendir(directory.c_str())) != NULL) {
-            while ((ent = readdir(dir)) != NULL) {
-                string fileName = ent->d_name;
-
-                
-                if (fileName.find("Log.csv") != string::npos) {
-                    TimeLog log;
-                    if (parseLogFile(fileName, log)) {
-                        logs.push_back(log);
-                    } else {
-                        cerr << "Skipping file due to errors: " << fileName << endl;
-                    }
-                }
-            }
-            closedir(dir);
-        } else {
-            cerr << "Error: Could not open directory " << directory << endl;
-            return 1;
+         for (const auto &entry : memberMinutes) {
+            reportData.push_back({entry.first, to_string(entry.second)});
         }
 
-        if (logs.empty()) {
-            cerr << "Error: No valid time log files found in the directory." << endl;
-            return 1;
-        }
-
-        generateReport1(logs, "PhaseThreeReport1.txt");
-
-        return 0;
+        // Build the report using the shared Report class
+        Report::buildReport(reportData, metadata);
     }
 
-
-
+    static string getFullName(const string &firstName, const string &lastName) {
+        return firstName + " " + lastName;
+    }
 };
+
+// Define static members
+vector<vector<string>> Report1::reportData;
+ReportMetadata Report1::metadata;
+
         
 
