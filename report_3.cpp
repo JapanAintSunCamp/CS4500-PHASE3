@@ -25,7 +25,7 @@ public:
 		}
 
 		reportData.push_back(headers);
-		
+
 		for (auto &log : Logs::logs) {
 			metadata.people.push_back(getFullName(log.firstName, log.lastName));
 			map<char, int> aggregatedActivities = aggregateActivities(log);
@@ -74,7 +74,7 @@ public:
 			for (Activity activity : log.activities) {
 				activityMap[activity.code] += activity.minutes;
 			}
-			
+
 			return activityMap;
 	}
 

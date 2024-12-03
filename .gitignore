@@ -40,3 +40,5 @@
 /.DS_Store
 /.project
 *.txt
+/.vs
+/CppProperties.json

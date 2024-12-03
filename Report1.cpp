@@ -7,10 +7,10 @@
 #include "log.h"
 #include "report.h"
 
-using namespace std;
+// using namespace std;
 
 class Report1 {
-public: 
+public:
     static vector<vector<string>> reportData;
     static ReportMetadata metadata;
 
@@ -61,5 +61,5 @@ public:
 vector<vector<string>> Report1::reportData;
 ReportMetadata Report1::metadata;
 
-        
+
 

@@ -9,7 +9,7 @@ void Report::buildReport(vector<vector<string>> data, ReportMetadata metadata) {
 
   reportFile << metadata.title << endl;
   reportFile << metadata.classId << endl << endl;
-  
+
   for (string name : metadata.people) {
     reportFile << name << endl;
   }

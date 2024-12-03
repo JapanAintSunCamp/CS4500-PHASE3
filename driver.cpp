@@ -42,7 +42,7 @@
  * 	- Graph 1: Justin Macapanpan
  * 	- Graph 2: Dat Nguyen
  * 	- Graph 3: Justin Macapanpan
- * 
+ *
  * Included alongside the program are three design documents:
  * 	- Pseudo-Code: Rett Swyers
  * 	- Call Graph: Grant Hughes
@@ -64,6 +64,7 @@
 #include "validation.cpp"
 #include "report_2.cpp"
 #include "report_3.cpp"
+#include "report_5.cpp"
 #include "report.cpp"
 #include "graph_A.cpp"
 #include "graph_B.cpp"
@@ -100,6 +101,7 @@ int main() {
 
 		Report1::generateReport();
 		Report4::generateReport();
+		Report5::generateReport();
 	} catch(const string &errorMessage) {
 		cout << errorMessage << endl;
 	}

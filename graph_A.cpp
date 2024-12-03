@@ -17,7 +17,7 @@ public:
 
     for (auto const &log : Logs::logs) {
       string fullName = getFullName(log.firstName, log.lastName);
-      
+
       for (auto const &activity : log.activities) {
         minutesMap[fullName] += activity.minutes;
       }
@@ -94,7 +94,7 @@ public:
 
   static string getFullName(string firstName, string lastName) {
 		return firstName + " " + lastName;
-	} 
+	}
 };
 
 map<string, int> GraphA::minutesMap;

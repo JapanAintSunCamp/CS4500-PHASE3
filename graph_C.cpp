@@ -27,13 +27,13 @@ public:
 
         // Insert 0s at the beginning
         if (day.length() < 2) {
-            day.insert(0, 1, '0'); 
+            day.insert(0, 1, '0');
         }
 
         if (month.length() < 2) {
-          month.insert(0, 1, '0'); 
+          month.insert(0, 1, '0');
         }
-            
+
         string date = month + "/" + day;
 
 				datesMap[date] += activity.minutes;
@@ -59,7 +59,7 @@ public:
 
     int interval = max / scale;
 
-    
+
     for (int i = 0; i < scale; i++) {
       int currentValue = max - interval * i;
       cout << setw(5) << currentValue << "|";
