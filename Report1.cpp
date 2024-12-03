@@ -1,9 +1,10 @@
 #include <map>
 #include <vector>
-#include <
-#include <iomanip?
-#include "log.h>
+#include <string>
+#include <iomanip>
+#include "log.h"
 #include "report.h"
+
 
 using namespace std;
 
