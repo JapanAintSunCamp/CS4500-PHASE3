@@ -39,9 +39,30 @@ public:
 			reportData.push_back(userData);
 		}
 
+		generateCsv();
+
 		Report::buildReport(reportData, metadata);
 	}
 
+	static void generateCsv() {
+		ofstream stringFile("PhaseThreeReportThree.csv", ios_base::out);
+
+		if (stringFile.fail()) {
+			throw string("[ERROR] Error opening the file");
+		}
+
+		for (vector<string> row : reportData) {
+			stringFile << row.at(0);
+
+			for (int i = 1; i < row.size(); i++) {
+				stringFile << string() + "," + row[i];
+			}
+
+			stringFile << '\n';
+		}
+
+		stringFile.close();
+	}
 
 	static map<char, int> aggregateActivities(Log log) {
 			map<char, int> activityMap;
