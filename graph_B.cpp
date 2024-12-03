@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <limits>
-#include <cstdio> 
+#include <filesystem>
 using namespace std;
 
 class GraphB{
@@ -151,7 +151,7 @@ public:
         printHeatmapLegend(activityCodes);
         cout << "\033[0m";
 
-        remove("PhaseThreeReportThree.csv");
+        filesystem::remove("PhaseThreeReportThree.csv");
 
         return 0;
     }
