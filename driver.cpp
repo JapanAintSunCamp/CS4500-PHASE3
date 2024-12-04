@@ -15,11 +15,13 @@
  *
  * Windows
  *
- * You must install a GNU compiler to compile the program
- * 1) Install the cl compiler for Windows
- * 2) In the Windows Command Prompt enter: <path to cl binary> /Zi /std:c++20 /EHsc driver.cpp
- * 3) The compiled program will be generated and placed into a file named a.exe
- * 4) Double-click a.exe to start the program
+ * This program requires the cl compiler included with the Visual Studio Code C/C++ Extension to compile
+ * 1) Install the cl compiler for Windows - [link to tutorial](https://code.visualstudio.com/docs/cpp/config-msvc)
+ * 2) In a Developer Powershell for VS 2022 terminal navigate to the project directory containing all project files
+ * 2) In the terminal enter: cl /std:c++20 /EHsc driver.cpp
+ * 3) The compiled program will be generated and placed into a file named driver.exe in the local directory
+ * 4) Place driver.exe file into a directory with the log files you would like to use to generate the report
+ * 5) Double-click driver.exe to start the program
  *
  * PROGRAMMER(S): Grant Hughes, Samuel Irvin, Vladic Kostin, Justin Macapanpan, Dat Nguyen, Keewon Owens, Rett Swyers
  *
