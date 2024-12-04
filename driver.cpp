@@ -16,9 +16,9 @@
  * Windows
  *
  * You must install a GNU compiler to compile the program
- * 1) Install MinGW-64 for Windows; this will install and place a binary into C:\msys64\ucrt64\bin
- * 2) In the Windows Command Prompt enter: <path to compiler binary> -static driver.cpp
- * 3) The statically-linked compiled program will be generated and placed into a file named a.exe
+ * 1) Install the cl compiler for Windows
+ * 2) In the Windows Command Prompt enter: <path to cl binary> /Zi /std:c++20 /EHsc driver.cpp
+ * 3) The compiled program will be generated and placed into a file named a.exe
  * 4) Double-click a.exe to start the program
  *
  * PROGRAMMER(S): Grant Hughes, Samuel Irvin, Vladic Kostin, Justin Macapanpan, Dat Nguyen, Keewon Owens, Rett Swyers
